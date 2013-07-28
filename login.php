@@ -20,6 +20,13 @@ class GetInfoException extends Exception {
     protected $message = 'Get student infomation failed';
 }
 
+/*
+ * Every sub-class inherits from this class should implement
+ * its own `login` and `get_info` method.
+ *
+ * Originally code toke from http://t.cn/zQx3h1v,
+ * also inspired by http://gdutexchange.com/reg.
+ */
 class LoginInterface {
     protected $username;
     protected $password;
