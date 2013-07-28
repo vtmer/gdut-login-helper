@@ -52,7 +52,6 @@ class LoginInterface {
 
         // carry session id
         if ($session_id) {
-            echo $url;
             curl_setopt($conn, CURLOPT_COOKIESESSION, true);
             curl_setopt($conn, CURLOPT_COOKIE,
                 $this->session_cookie_name . '=' . $session_id);

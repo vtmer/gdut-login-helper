@@ -24,7 +24,7 @@ class ESWISLogin extends LoginInterface {
     }
 
     private function check_login($body) {
-        if (preg_match('/ctl00_msg_logon class="msgstr">([^<]+)</',
+        if (preg_match('/ctl00_msg_logon" class="msgstr">([^<]+)</',
             $body, $ret)) {
             return $ret[1];
         }
