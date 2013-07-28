@@ -26,6 +26,7 @@ class LoginInterface {
     protected $ua = 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)';
     protected $timeout = 10;
     protected $session_cookie_name = 'ASP.NET_SessionId';
+    protected $session_id = null;
 
     /*
      * make a HTTP request
@@ -95,7 +96,7 @@ class LoginInterface {
     /*
      * Get student infomation
      */
-    public function get_info($session_id) {
+    public function get_info() {
         return null;
     }
 

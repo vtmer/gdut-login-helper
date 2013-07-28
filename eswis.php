@@ -4,6 +4,7 @@ require_once('login.php');
 
 class ESWISLogin extends LoginInterface {
     protected $login_url = 'http://eswis.gdut.edu.cn/default.aspx';
+    protected $key = null;
 
     private function get_session_form() {
         $ret = $this->request($this->login_url);
@@ -38,6 +39,13 @@ class ESWISLogin extends LoginInterface {
         return null;
     }
 
+    private function get_key($body) {
+        if (preg_match('/\?key=([0-9a-zA-Z]+)/', $body, $ret)) {
+            return $ret[1];
+        }
+        return null;
+    }
+
     public function login() {
         $session_form = $this->get_session_form();
         $session_form['ctl00$log_username'] = $this->username;
@@ -54,7 +62,18 @@ class ESWISLogin extends LoginInterface {
         if (!$session_id) {
             throw new LoginException('Session ID not found');
         }
-        return $session_id;
+        $this->session_id = $session_id;
+
+        $key = $this->get_key($ret['body']);
+        if (!$key) {
+            throw new LoginException('Key not found');
+        }
+        $this->key = $key;
+
+        return array(
+            'session_id' => $session_id,
+            'key' => $key
+        );
     }
 
     private function parse_information($re, $body) {
@@ -64,16 +83,16 @@ class ESWISLogin extends LoginInterface {
         return $val[1];
     }
 
-    public function get_info($session_id) {
-        $url = 'http://eswis.gdut.edu.cn/opt_xxhz.aspx?key=' . $session_id;
-        $ret = $this->request($url, null, $session_id);
+    public function get_info() {
+        $url = 'http://eswis.gdut.edu.cn/opt_xxhz.aspx?key=' . $this->key;
+        $ret = $this->request($url, null, $this->session_id);
         $body = $ret['body'];
 
         $info = array(
             'name' => $this->parse_information(
-                '/ctl00_cph_right_inf_xm">([^<]+)>/', $body),
+                '/ctl00_cph_right_inf_xm">([^<]+)</', $body),
             'stu_id' => $this->parse_information(
-                '/ctl00_cph_right_inf_xh">([^<]+)>/', $body)
+                '/ctl00_cph_right_inf_xh">([^<]+)</', $body)
         );
         $details = explode(' ', $this->parse_information(
             '/ctl00_cph_right_inf_dw">([^<]+)</', $body
