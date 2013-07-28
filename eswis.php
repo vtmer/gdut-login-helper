@@ -24,7 +24,7 @@ class ESWISLogin extends LoginInterface {
     }
 
     private function check_login($body) {
-        if (preg_match('/ctl00_msg_logon class="msgstr">([^<]<)/',
+        if (preg_match('/ctl00_msg_logon class="msgstr">([^<]+)</',
             $body, $ret)) {
             return $ret[1];
         }
@@ -49,7 +49,19 @@ class ESWISLogin extends LoginInterface {
         if ($err) {
             throw new LoginException($err);
         }
-        return $this->get_session_id($ret['body']);
+
+        $session_id = $this->get_session_id($ret['body']);
+        if (!$session_id) {
+            throw new LoginException('Session ID not found');
+        }
+        return $session_id;
+    }
+
+    private function parse_information($re, $body) {
+        if (!preg_match($re, $body, $val)) {
+            throw new GetInfoException();
+        }
+        return $val[1];
     }
 
     public function get_info($session_id) {
@@ -57,13 +69,15 @@ class ESWISLogin extends LoginInterface {
         $ret = $this->request($url, null, $session_id);
         $body = $ret['body'];
 
-        $info = array();
-        preg_match('/ctl00_cph_right_inf_xm>([^<]+)</', $body, $val);
-        $info['name'] = $val[1];
-        preg_match('/ctl00_cph_right_inf_xh">([^<]+)</', $body, $val);
-        $info['stu_id'] = $val[1];
-        preg_match('/ctl00_cph_right_inf_dw">([^<]+)</', $str, $val);
-        $details = explode(' ', $val[1]);
+        $info = array(
+            'name' => $this->parse_information(
+                '/ctl00_cph_right_inf_xm">([^<]+)>/', $body),
+            'stu_id' => $this->parse_information(
+                '/ctl00_cph_right_inf_xh">([^<]+)>/', $body)
+        );
+        $details = explode(' ', $this->parse_information(
+            '/ctl00_cph_right_inf_dw">([^<]+)</', $body
+        ));
         $info['campus'] = $details[0];
         $info['faculty'] = $details[1];
         $info['major'] = $details[2];

@@ -5,9 +5,7 @@ function array2post_form($arr) {
     foreach ($arr as $key => $value) {
         $form .= urlencode($key) . '=' . urlencode($value) . '&';
     }
-    rtrim($form, '&');
-
-    return $form;
+    return rtrim($form, '&');
 }
 
 class CURLException extends Exception {
@@ -16,6 +14,10 @@ class CURLException extends Exception {
 
 class LoginException extends Exception {
     protected $message = 'Login failed';
+}
+
+class GetInfoException extends Exception {
+    protected $message = 'Get student infomation failed';
 }
 
 class LoginInterface {
@@ -50,6 +52,7 @@ class LoginInterface {
 
         // carry session id
         if ($session_id) {
+            echo $url;
             curl_setopt($conn, CURLOPT_COOKIESESSION, true);
             curl_setopt($conn, CURLOPT_COOKIE,
                 $this->session_cookie_name . '=' . $session_id);
@@ -68,7 +71,7 @@ class LoginInterface {
         $content = curl_exec($conn);
         $endtime = microtime();
         if ($content === false) {
-            throw new CURLException();
+            throw new CURLException(curl_error($conn));
         }
 
         // get response header
