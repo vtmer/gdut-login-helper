@@ -5,6 +5,14 @@
  {
  	protected $login_url = 'http://222.200.98.171:81/login.aspx';
 
+	private function check_login($body) {
+        if (preg_match('/ctl00_ContentPlaceHolder1_lblErr_Lib"><font color="#ff0000">([^<]+)</',
+            $body, $ret)) {
+            return $ret[1];
+        }
+        return false;
+    }
+
  	private  function get_session_form() 
  	{
  		$ret = $this->request($this->login_url);
@@ -30,7 +38,10 @@
         $session_form['ctl00$ContentPlaceHolder1$btnLogin_Lib'] ='登录';
 
         $ret = $this->request($this->login_url, $session_form);
-
+        $err = $this->check_login($ret['body']);
+        if ($err) {
+            throw new LoginException($err);
+        }
         print_r($ret['body']);
  	}
  }

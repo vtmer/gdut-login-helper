@@ -15,6 +15,11 @@
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once('library.php');
     $stu = new LibrayLogin($_POST['username'], $_POST['password']);
-    $stu->login();
+    try {
+    	$stu->login();
+    }catch(LoginException $e) {
+        echo '<p>' . $e->getMessage() . '</p>';
+        die();
+    }
 }
 ?>
