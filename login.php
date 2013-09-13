@@ -41,8 +41,9 @@ class LoginInterface {
      * :param url: request url
      * :param form: request form, if any, use POST rather than GET
      * :param session_id: session id that will be carried as cookie
+     * :param etc_opt: etc curl options
      */
-    protected function request($url, $form = false, $session_id = false) {
+    protected function request($url, $form = false, $session_id = false, $etc_opt = array()) {
         $starttime = microtime();
 
         // init curl
@@ -57,6 +58,10 @@ class LoginInterface {
         // HTTP redirect
         curl_setopt($conn, CURLOPT_MAXREDIRS, 7);
         curl_setopt($conn, CURLOPT_HEADER, 1);
+
+        foreach ($etc_opt as $key => $value) {
+            curl_setopt($conn, $key, $value);
+        }
 
         // carry session id
         if ($session_id) {
@@ -91,6 +96,13 @@ class LoginInterface {
             'header' => $header,
             'body' => $content
         );
+    }
+
+    protected function parse_information($re, $body) {
+        if (!preg_match($re, $body, $val)) {
+            throw new GetInfoException();
+        }
+        return $val[1];
     }
 
     /*

@@ -76,12 +76,12 @@ class ESWISLogin extends LoginInterface {
         );
     }
 
-    private function parse_information($re, $body) {
-        if (!preg_match($re, $body, $val)) {
-            throw new GetInfoException();
-        }
-        return $val[1];
-    }
+    //private function parse_information($re, $body) {
+        //if (!preg_match($re, $body, $val)) {
+            //throw new GetInfoException();
+        //}
+        //return $val[1];
+    //}
 
     public function get_info() {
         $url = 'http://eswis.gdut.edu.cn/opt_xxhz.aspx?key=' . $this->key;
