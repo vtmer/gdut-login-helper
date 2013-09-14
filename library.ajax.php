@@ -7,9 +7,9 @@ class LibraryAjaxLogin extends LoginInterface {
     protected $cookie;
 
 
-    public function login($username, $password) {
-        $form['username'] = $username;
-        $form['password'] = $password;
+    public function login() {
+        $form['username'] = $this->username;
+        $form['password'] = $this->password;
         $ret = $this->request($this->login_url, $form, false, array(
             CURLOPT_REFERER => $this->referer_url
         ));
@@ -39,6 +39,4 @@ class LibraryAjaxLogin extends LoginInterface {
 
         return $info;
     }
-
-    public function __construct() {}
 }

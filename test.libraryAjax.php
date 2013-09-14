@@ -1,7 +1,6 @@
 <?php 
 require_once('library.ajax.php');
 
-$lib = new LibraryAjaxLogin();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +20,8 @@ $lib = new LibraryAjaxLogin();
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $ret = $lib->login($_POST['username'], $_POST['password']);
+        $lib = new LibraryAjaxLogin($_POST['username'], $_POST['password']);
+        $ret = $lib->login();
         var_dump($ret);
     } catch (Exception $e) {
         echo $e->getMessage();
