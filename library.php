@@ -1,46 +1,47 @@
 <?php
-
 require_once('login.php');
 
-class LibraryLogin extends LoginInterface {
-    protected $login_url = 'http://222.200.98.171:81/internalloginAjax.aspx';
-    protected $referer_url = 'http://222.200.98.171:81/internal_login.aspx';
-    protected $cookie;
+class LibrayLogin extends LoginInterface
+{
+    protected $login_url = 'http://222.200.98.171:81/login.aspx';
 
-
-    public function login($username, $password) {
-        $form['username'] = $username;
-        $form['password'] = $password;
-        $ret = $this->request($this->login_url, $form, false, array(
-            CURLOPT_REFERER => $this->referer_url
-        ));
-        $this->cookie = $this->parse_information(
-            '/sulcmiswebpac=([0-9a-zA-Z]+)/',
-            $ret['body']
-        );
-
-        return $this->get_info();
+    private function check_login($body) {
+        if (preg_match('/ctl00_ContentPlaceHolder1_lblErr_Lib"><font color="#ff0000">([^<]+)</',
+            $body, $ret)) {
+            return $ret[1];
+        }
+        return false;
     }
 
-    public function get_info() {
-        $url = "http://222.200.98.171:81/user/userinfo.aspx";
-        $ret = $this->request($url, null, false, array(
-            CURLOPT_COOKIE => 'sulcmiswebpac=' . $this->cookie
-        ));
+    private  function get_session_form() 
+    {
+        $ret = $this->request($this->login_url);
+        $html = $ret['body'];
 
-        preg_match_all(
-            '/class="inforight">([^<]+)</', 
-            $ret['body'],
-            $val
-        );
-        $info['student_number'] = $val[1][0];
-        $info['student_name'] = $val[1][1];
-        $info['faculty'] = $val[1][3];
-        $info['major'] = $val[1][7];
+        $session = array(
+                '__EVENTTARGET'=>'',
+                '__EVENTARGUMENT'=>''
+            );
+        preg_match('/__EVENTVALIDATION" value="([^\"]*)/', $html, $val);
+        $session['__EVENTVALIDATION'] = $val[1];
+        preg_match('/__VIEWSTATE" value="([^\\"]*)/', $html, $val);
+        $session['__VIEWSTATE'] = $val[1];
 
-        return $info;
+        return $session;
     }
+    public function login()
+    {
+        $session_form = $this->get_session_form();
+        $session_form['ctl00$ContentPlaceHolder1$txtUsername_Lib'] = $this->username;
+        $session_form['ctl00$ContentPlaceHolder1$txtPas_Lib'] = $this->password;
+        $session_form['ctl00$ContentPlaceHolder1$txtlogintype'] = 0;
+        $session_form['ctl00$ContentPlaceHolder1$btnLogin_Lib'] ='登录';
 
-    public function __construct() {}
+        $ret = $this->request($this->login_url, $session_form);
+        $err = $this->check_login($ret['body']);
+        if ($err) {
+            throw new LoginException($err);
+        }
+        print_r($ret['body']);
+    }
 }
-
