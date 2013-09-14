@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once('eswis.php');
 
     $stu = new ESWISLogin($_POST['username'], $_POST['password']);
+
     try {
         $stu->login();
         display_info($stu->get_info());

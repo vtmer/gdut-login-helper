@@ -53,10 +53,6 @@ class ESWISLogin extends LoginInterface {
         $session_form['ctl00$logon'] = '登录';
 
         $ret = $this->request($this->login_url, $session_form);
-        $err = $this->check_login($ret['body']);
-        if ($err) {
-            throw new LoginException($err);
-        }
 
         $session_id = $this->get_session_id($ret['body']);
         if (!$session_id) {
@@ -70,18 +66,12 @@ class ESWISLogin extends LoginInterface {
         }
         $this->key = $key;
 
+        //return $ret;
         return array(
             'session_id' => $session_id,
             'key' => $key
         );
     }
-
-    //private function parse_information($re, $body) {
-        //if (!preg_match($re, $body, $val)) {
-            //throw new GetInfoException();
-        //}
-        //return $val[1];
-    //}
 
     public function get_info() {
         $url = 'http://eswis.gdut.edu.cn/opt_xxhz.aspx?key=' . $this->key;
