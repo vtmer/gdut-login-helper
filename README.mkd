@@ -15,7 +15,7 @@
 
 ## 用法
 
-参见 [index.php](index.php)
+参见 [test.eswis.php](test.eswis.php)
 
 
 ## TODO
