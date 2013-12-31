@@ -1,0 +1,31 @@
+{
+    "name": "vtmer/gdut-login-helper",
+    "type": "library",
+    "description": "Some APIs used to verify users' identity and get informations from GDUT's websites, including Eswis(http://eswis.gdut.edu.cn/) and library(http://222.200.98.171:81/)",
+    "keywords": ["gdut", "login"],
+    "homepage": "https://github.com/vtmer/gdut-login-helper",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "bcho",
+            "email": "bcxxxxxx@gmail.com",
+            "homepage": "http://youknowmymind.com",
+            "role": "developer"
+        },
+        {
+            "name": "linkkingay",
+            "email": "linkkingjay@gmail.com",
+            "homepage": "http://linkkingjay.github.io",
+            "role": "developer"
+        },
+        {
+            "name": "zhangchile",
+            "email": "zzlchile@gmail.com",
+            "role": "developer"
+        }
+    ],
+    "autoload": {
+        "files": ["eswis.php", "library.ajax.php", "library.php"]
+    },
+    "version": "1.0.0"
+}
