@@ -1,6 +1,6 @@
 # GDUT Login Helper
 
-广工大登录助手 v0.1.0
+广工大登录助手 v0.1.1
 
 
 ## 用途
@@ -13,15 +13,11 @@
 原始代码来源于[工大书架](https://github.com/vtmer/bookshelf/blob/7f448213561edff45c3b5c52de756dbcd45e67a8/website/application/libraries/catch_msg.php)，同时也受到[广工闲置品交易](http://gdutexchange.com/reg)的启发。
 
 
-## 用法
-
-参见 [test.eswis.php](test.eswis.php)
-
-
 ## TODO
 
-* 提供教务系统的登录接口
-* 更好的文档
+* [?] README 更新
+* [?] 提供教务系统的登录接口
+* [?] 关于使用的文档
 
 
 ## 参与进来
