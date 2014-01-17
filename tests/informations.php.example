@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * 测试用户信息
+ *
+ * 因为文件包含了敏感的信息，所以不应该把包含了
+ * 你个人信息的文件加入到版本控制中。
+ */
+return array(
+    // 学生编号
+    'student_number' => '3112005816',
+
+    // 学生姓名
+    'student_name' => '你的名字',
+
+    // 学生学院
+    'faculty' => '计算机学院',
+
+    // 学生专业
+    'major' => '计算机科学与技术',
+
+    // 登录信息
+    'credential' => array(
+        // 图书馆系统
+        'library' => array(
+            'username' => '3112005816',
+            'password' => 'password'
+        ),
+
+        // 工作信息系统
+        'eswis' => array(
+            'username' => '3112005816',
+            'password' => 'passw0rd'
+        )
+    )
+);
