@@ -1,17 +1,18 @@
 <?php
 
 require_once 'bootstrap.php';
-require_once __DIR__ . '/../LibraryAJAX.php';
+require_once __DIR__ . '/../ESWIS.php';
 
-class LibraryAJAXTest extends Login_Helper_TestCase
+
+class ESWISTest extends Login_Helper_TestCase
 {
     public function setup()
     {
         parent::setup();
 
-        $this->helper = new LibraryAJAX();
+        $this->helper = new ESWIS();
     }
-
+    
     public function testLoginException()
     {
         $this->setExpectedException('LoginException');
@@ -21,7 +22,7 @@ class LibraryAJAXTest extends Login_Helper_TestCase
 
     public function testGetInfos()
     {
-        $cred = $this->infos['credential']['library'];
+        $cred = $this->infos['credential']['eswis'];
         $this->helper->setup($cred['username'], $cred['password']);
         $this->helper->login();
         $infos = $this->helper->getInfos();

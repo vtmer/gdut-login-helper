@@ -20,33 +20,59 @@ class GetInfoException extends Exception {
     protected $message = 'Get student infomation failed';
 }
 
-/*
- * Every sub-class inherits from this class should implement
- * its own `login` and `get_info` method.
- *
- * Originally code toke from http://t.cn/zQx3h1v,
- * also inspired by http://gdutexchange.com/reg.
+/**
+ * 登录抽象类
  */
-class LoginInterface {
-    protected $username;
-    protected $password;
-    protected $ua = 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)';
-    protected $timeout = 10;
-    protected $session_cookie_name = 'ASP.NET_SessionId';
-    protected $session_id = null;
-
-    /*
-     * make a HTTP request
+abstract class AbstractLogin
+{
+    /**
+     * 设置登录信息
      *
-     * :param url: request url
-     * :param form: request form, if any, use POST rather than GET
-     * :param session_id: session id that will be carried as cookie
-     * :param etc_opt: etc curl options
+     * @param string 用户名
+     * @param string 登录密码
      */
-    protected function request($url, $form = false, $session_id = false, $etc_opt = array()) {
-        $starttime = microtime();
+    abstract public function setup($username, $password);
 
-        // init curl
+    /**
+     * 进行登录
+     *
+     * @throws `LoginException`
+     * @throws `CURLException`
+     */
+    abstract public function login();
+
+    /**
+     * 获取用户信息
+     *
+     * @return array
+     * @throws `GetInfoException`
+     */
+    abstract public function getInfos();
+
+    /**
+     * 模拟使用的 user-agent 值
+     */
+    protected $ua = 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)';
+
+    /**
+     * 请求超时设定 
+     */
+    protected $timeout = 10;
+
+    /**
+     * 发起一个 http 请求
+     *
+     * @param string 请求地址
+     * @param array 请求表单，假如非空则使用 `POST` 请求
+     * @param array 对 curl 的额外配置项
+     * @return array 包含请求时长、响应头、响应内容
+     * @throws `CURLException`
+     */
+    protected function request($url, $form = null, $extraOptions = array())
+    {
+        $starttime = microtime();
+        
+        // setup curl
         $conn = curl_init();
         curl_setopt($conn, CURLOPT_URL, $url);
         curl_setopt($conn, CURLOPT_VERBOSE, 0);
@@ -59,17 +85,6 @@ class LoginInterface {
         curl_setopt($conn, CURLOPT_MAXREDIRS, 7);
         curl_setopt($conn, CURLOPT_HEADER, 1);
 
-        foreach ($etc_opt as $key => $value) {
-            curl_setopt($conn, $key, $value);
-        }
-
-        // carry session id
-        if ($session_id) {
-            curl_setopt($conn, CURLOPT_COOKIESESSION, true);
-            curl_setopt($conn, CURLOPT_COOKIE,
-                $this->session_cookie_name . '=' . $session_id);
-        }
-
         // carry post form
         if ($form) {
             if (is_array($form)) {
@@ -79,48 +94,41 @@ class LoginInterface {
             curl_setopt($conn, CURLOPT_POSTFIELDS, $form);
         }
 
+        // extra options
+        foreach ($extraOptions as $k => $v) {
+            curl_setopt($conn, $k, $v);
+        }
+
         // execute
         $content = curl_exec($conn);
-        $endtime = microtime();
+        $duration = microtime() - $starttime;
         if ($content === false) {
             throw new CURLException(curl_error($conn));
         }
 
-        // get response header
+        // process response header
         $header = curl_getinfo($conn);
 
         curl_close($conn);
-
         return array(
-            'duration' => $endtime - $starttime,
+            'duration' => $duration,
             'header' => $header,
             'body' => $content
         );
     }
 
-    protected function parse_information($re, $body) {
-        if (!preg_match($re, $body, $val)) {
-            throw new GetInfoException();
+    /**
+     * 根据正则表达式解析信息
+     *
+     * @param string 正则表达式
+     * @param string 内容
+     * @return mixed
+     */
+    protected function parseInformation($pattern, $body)
+    {
+        if (!preg_match($pattern, $body, $val)) {
+            return null;
         }
         return $val[1];
-    }
-
-    /*
-     * Do user login and return a session id
-     */
-    protected function login() {
-        return null;
-    }
-
-    /*
-     * Get student infomation
-     */
-    public function get_info() {
-        return null;
-    }
-
-    public function __construct($username, $password) {
-        $this->username = $username;
-        $this->password = $password;
     }
 }

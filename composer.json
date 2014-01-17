@@ -25,7 +25,7 @@
         }
     ],
     "autoload": {
-        "files": ["eswis.php", "library.php", "library.ajax.php"]
+        "files": ["ESWIS.php", "Library.php", "LibraryAJAX.php"]
     },
     "version": "1.0.0",
 

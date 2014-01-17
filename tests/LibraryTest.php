@@ -1,15 +1,15 @@
 <?php
 
 require_once 'bootstrap.php';
-require_once __DIR__ . '/../LibraryAJAX.php';
+require_once __DIR__ . '/../Library.php';
 
-class LibraryAJAXTest extends Login_Helper_TestCase
+class LibraryTest extends Login_Helper_TestCase
 {
     public function setup()
     {
         parent::setup();
 
-        $this->helper = new LibraryAJAX();
+        $this->helper = new Library();
     }
 
     public function testLoginException()
