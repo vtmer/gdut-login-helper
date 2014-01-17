@@ -58,7 +58,7 @@ class LibraryAJAX extends AbstractLogin
             throw new LoginException();
         }
 
-        $this->cookie = $this->parseInformation(
+        $this->cookie = parseInformation(
             '/sulcmiswebpac=([0-9a-zA-Z]+)/',
             $ret['body']
         );

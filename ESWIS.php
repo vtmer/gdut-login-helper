@@ -40,31 +40,6 @@ class ESWIS extends AbstractLogin
      */
     private $key = null;
 
-    /**
-     * 获取登录表单中的 session 值 (CSRF)
-     *
-     * @return array
-     */
-    private function getSessionForm()
-    {
-        $ret = $this->request($this->loginUrl);
-        $body = $ret['body'];
-
-        $session = array(
-            '__EVENTTARGET' => '',
-            '__EVENTARGUMENT' => ''
-        );
-        $rules = array(
-            '__EVENTVALIDATION' => '/__EVENTVALIDATION" value="([^\"]*)/',
-            '__VIEWSTATE' => '/__VIEWSTATE" value="([^\\"]*)/'
-        );
-        foreach ($rules as $name => $pattern) {
-            $session[$name] = $this->parseInformation($pattern, $body);
-        }
-
-        return $session;
-    }
-
     public function setup($username, $password)
     {
         $this->username = $username;
@@ -73,14 +48,15 @@ class ESWIS extends AbstractLogin
 
     public function login()
     {
-        $form = $this->getSessionForm();
+        $ret = $this->request($this->loginUrl);
+        $form = getASPSessionForm($ret['body']);
         $form['ctl00$log_username'] = $this->username;
         $form['ctl00$log_password'] = $this->password;
         $form['ctl00$logon'] = '登录';
 
         $ret = $this->request($this->loginUrl, $form);
 
-        $this->sessionId = $this->parseInformation(
+        $this->sessionId = parseInformation(
             '/ASP.NET_SessionId=([0-9a-z]+)/',
             $ret['body']
         );
@@ -88,7 +64,7 @@ class ESWIS extends AbstractLogin
             throw new LoginException('Session ID not found.');
         }
 
-        $this->key = $this->parseInformation(
+        $this->key = parseInformation(
             '/\?key=([0-9a-zA-Z]+)/',
             $ret['body']
         );
@@ -110,14 +86,14 @@ class ESWIS extends AbstractLogin
         $body = $ret['body'];
 
         $infos = array(
-            'student_name' => $this->parseInformation(
+            'student_name' => parseInformation(
                 '/ctl00_cph_right_inf_xm">([^<]+)</', $body
             ),
-            'student_number' => $this->parseInformation(
+            'student_number' => parseInformation(
                 '/ctl00_cph_right_inf_xh">([^<]+)</', $body
             )
         );
-        $details = explode(' ', $this->parseInformation(
+        $details = explode(' ', parseInformation(
             '/ctl00_cph_right_inf_dw">([^<]+)</', $body
         ));
         $infos['campus'] = $details[0];

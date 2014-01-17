@@ -1,11 +1,54 @@
 <?php
 
+/**
+ * 将关联数组转换成 POST 请求表单
+ *
+ * @param array 关联键值数组
+ * @return string
+ */
 function array2post_form($arr) {
     $form = '';
     foreach ($arr as $key => $value) {
         $form .= urlencode($key) . '=' . urlencode($value) . '&';
     }
     return rtrim($form, '&');
+}
+
+/**
+ * 从文本中获取对应匹配的内容
+ *
+ * @param string 匹配模式
+ * @param string 文本
+ * @return mixed
+ */
+function parseInformation($pattern, $body)
+{
+    if (!preg_match($pattern, $body, $val)) {
+        return null;
+    }
+    return $val[1];
+}
+
+/**
+ * 获取 ASP 的 session form
+ *
+ * @param string 响应内容
+ * @return array
+ */
+function getASPSessionForm($body) {
+    $session = array(
+        '__EVENTTARGET' => '',
+        '__EVENTARGUMENT' => ''
+    );
+    $rules = array(
+        '__EVENTVALIDATION' => '/__EVENTVALIDATION" value="([^\"]*)/',
+        '__VIEWSTATE' => '/__VIEWSTATE" value="([^\\"]*)/'
+    );
+    foreach ($rules as $name => $pattern) {
+        $session[$name] = parseInformation($pattern, $body);
+    }
+
+    return $session;
 }
 
 class CURLException extends Exception {
@@ -115,20 +158,5 @@ abstract class AbstractLogin
             'header' => $header,
             'body' => $content
         );
-    }
-
-    /**
-     * 根据正则表达式解析信息
-     *
-     * @param string 正则表达式
-     * @param string 内容
-     * @return mixed
-     */
-    protected function parseInformation($pattern, $body)
-    {
-        if (!preg_match($pattern, $body, $val)) {
-            return null;
-        }
-        return $val[1];
     }
 }
