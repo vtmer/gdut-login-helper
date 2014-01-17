@@ -1,0 +1,15 @@
+# 测试
+
+## 配置信息
+
+这些单元测试需要提供你在各个平台的用户信息，请按照
+[informations.php](informations.php.example) 的格式进行修改。
+
+
+## 运行测试
+
+可以使用以下命令来运行测试：
+
+```bash
+./vendor/bin/phpunit UnitTest tests/*
+```
