@@ -10,27 +10,27 @@ class Library extends AbstractLogin
     /**
      * 学生证号码
      */
-    private $username = null;
+    protected $username = null;
 
     /**
      * 图书馆系统登录密码
      */
-    private $password = null;
+    protected $password = null;
 
     /**
      * 登录地址
      */
-    private $loginUrl = 'http://222.200.98.171:81/login.aspx';
+    protected $loginUrl = 'http://222.200.98.171:81/login.aspx';
     
     /**
      * 学生信息页地址
      */
-    private $infoUrl = 'http://222.200.98.171:81/user/userinfo.aspx';
+    protected $infoUrl = 'http://222.200.98.171:81/user/userinfo.aspx';
 
     /**
      * 登录 session cookie
      */
-    private $cookie = null;
+    protected $cookie = null;
 
     public function setup($username, $password)
     {

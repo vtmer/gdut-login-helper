@@ -13,32 +13,32 @@ class ESWIS extends AbstractLogin
     /**
      * 学生证号码
      */
-    private $username = null;
+    protected $username = null;
 
     /**
      * 学生工作信息系统登录密码
      */
-    private $password = null;
+    protected $password = null;
 
     /**
      * 登录地址
      */
-    private $loginUrl = 'http://eswis.gdut.edu.cn/default.aspx';
+    protected $loginUrl = 'http://eswis.gdut.edu.cn/default.aspx';
 
     /**
      * 学生信息地址
      */
-    private $infoUrl = 'http://eswis.gdut.edu.cn/opt_xxhz.aspx?key=';
+    protected $infoUrl = 'http://eswis.gdut.edu.cn/opt_xxhz.aspx?key=';
 
     /**
      * Session ID
      */
-    private $sessionId = null;
+    protected $sessionId = null;
 
     /**
      * Session key
      */
-    private $key = null;
+    protected $key = null;
 
     public function setup($username, $password)
     {
